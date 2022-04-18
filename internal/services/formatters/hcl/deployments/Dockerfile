@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.10.2-alpine3.14
+FROM python:3.10.4-alpine3.14
 
 RUN apk add --quiet --no-cache wget
 
