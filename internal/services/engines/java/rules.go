@@ -429,7 +429,7 @@ func NewNoListenToClipboard() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-23",
 			Name:        "No Listen To Clipboard",
-			Description: "ClipboardManager is a system service that allows you to register a listener for when the clipboard changes and some malwares also listen to Clipboard changes.",
+			Description: "ClipboardManager is a system service that allows you to register a listener for when the clipboard changes and some malwares also listen to Clipboard changes. For more information checkout CAPEC-637 (https://capec.mitre.org/data/definitions/637.html) and both CWE-200 (https://cwe.mitre.org/data/definitions/200.html), CWE-267 (https://cwe.mitre.org/data/definitions/267.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
@@ -446,7 +446,7 @@ func NewNoCopyContentToClipboard() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-24",
 			Name:        "No copy content to clipboard",
-			Description: "This App copies data to clipboard. Sensitive data should not be copied to clipboard as other applications can access it.",
+			Description: "This App copies data to clipboard. Sensitive data should not be copied to clipboard as other applications can access it. For more information checkout CAPEC-637 (https://capec.mitre.org/data/definitions/637.html) and both CWE-200 (https://cwe.mitre.org/data/definitions/200.html), CWE-267 (https://cwe.mitre.org/data/definitions/267.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
@@ -488,178 +488,6 @@ func NewSQLInjectionWithSqlUtil() *text.Rule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`SqlUtil\.execQuery\(.*\+`),
-		},
-	}
-}
-
-// NewNoUseFridaServer Frida seems to be a pentest tool. I couldn't find an example similar to what our rule is looking for, so it's remains without tests.
-func NewNoUseFridaServer() *text.Rule {
-	return &text.Rule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-27",
-			Name:        "No Use Frida Server",
-			Description: "This App detects frida server.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`fridaserver`),
-			regexp.MustCompile(`27047|LIBFRIDA`),
-		},
-	}
-}
-
-// NewNoUseSSLPinningLib not really sure about this vulnerability, needs to be revised in the future.
-func NewNoUseSSLPinningLib() *text.Rule {
-	return &text.Rule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-28",
-			Name:        "No Use SSL Pinning Lib",
-			Description: "This App uses an SSL Pinning Library (org.thoughtcrime.ssl.pinning) to prevent MITM attacks in secure communication channel.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`org.thoughtcrime.ssl.pinning`),
-			regexp.MustCompile(`PinningHelper.getPinnedHttpsURLConnection|PinningHelper.getPinnedHttpClient|PinningSSLSocketFactory\(`),
-		},
-	}
-}
-
-func NewNoUseDexGuardAppDebuggable() *text.Rule {
-	return &text.Rule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-29",
-			Name:        "DexGuard Debug Detection",
-			Description: "DexGuard Debug Detection code to detect whatever an App is debuggable or not is identified.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`DebugDetector.isDebuggable`),
-			regexp.MustCompile(`dexguard.util`),
-		},
-	}
-}
-
-func NewNoUseDexGuardDebuggerConnected() *text.Rule {
-	return &text.Rule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-30",
-			Name:        "No Use DexGuard Debugger Connected",
-			Description: "DexGuard Debugger Detection code is identified.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`import dexguard.util`),
-			regexp.MustCompile(`DebugDetector.isDebuggerConnected`),
-		},
-	}
-}
-
-func NewNoUseDexGuardEmulatorDetection() *text.Rule {
-	return &text.Rule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-31",
-			Name:        "No Use DexGuard Emulator Detection",
-			Description: "DexGuard Emulator Detection code is identified.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`import dexguard.util`),
-			regexp.MustCompile(`EmulatorDetector.isRunningInEmulator`),
-		},
-	}
-}
-
-func NewNoUseDexGuardWithDebugKey() *text.Rule {
-	return &text.Rule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-32",
-			Name:        "No Use DexGuard With Debug Key",
-			Description: "DexGuard code to detect wheather the App is signed with a debug key or not is identified.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`import dexguard.util`),
-			regexp.MustCompile(`DebugDetector.isSignedWithDebugKey`),
-		},
-	}
-}
-
-func NewNoUseDexGuardRoot() *text.Rule {
-	return &text.Rule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-33",
-			Name:        "No Use DexGuard Root",
-			Description: "DexGuard Root Detection code is identified",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`import dexguard.util`),
-			regexp.MustCompile(`RootDetector.isDeviceRooted`),
-		},
-	}
-}
-
-func NewNoUseDexGuard() *text.Rule {
-	return &text.Rule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-34",
-			Name:        "No Use DexGuard",
-			Description: "DexGuard App Tamper Detection code is identified",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`import dexguard.util`),
-			regexp.MustCompile(`TamperDetector.checkApk`),
-		},
-	}
-}
-
-func NewNoUseDexGuardInSigner() *text.Rule {
-	return &text.Rule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-35",
-			Name:        "No Use DexGuard in signer",
-			Description: "DexGuard Signer Certificate Tamper Detection code is identified",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`import dexguard.util`),
-			regexp.MustCompile(`TCertificateChecker.checkCertificate`),
-		},
-	}
-}
-
-func NewNoUsePackageWithTamperDetection() *text.Rule {
-	return &text.Rule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-36",
-			Name:        "No use package with tamper detection.",
-			Description: "The App may use package signature for tamper detection.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`PackageManager.GET_SIGNATURES`),
-			regexp.MustCompile(`getPackageName\(`),
 		},
 	}
 }
