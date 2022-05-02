@@ -21,6 +21,9 @@ RUN "$JAVA_HOME/bin/jlink" --compress=2 \
 
 FROM python:3.10.4-alpine3.14
 
+# This installation is necessary for semgrep tool dependency: ruamel.yaml.clib>=0.2.6
+# See more details in: https://stackoverflow.com/questions/69287269/installing-ruamel-yaml-clib-with-docker
+RUN apk add --no-cache gcc musl-dev python3-dev
 RUN pip install semgrep==v0.90.0
 
 COPY --from=jlink /jlinked /opt/jdk/
