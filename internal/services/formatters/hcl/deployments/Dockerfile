@@ -16,13 +16,11 @@ FROM python:3.10.4-alpine3.14
 
 RUN apk add --quiet --no-cache wget
 
-RUN wget -O /usr/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v0.55.1/tfsec-linux-amd64 && chmod +x /usr/bin/tfsec
+RUN wget -O /usr/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v1.19.1/tfsec-linux-amd64 && chmod +x /usr/bin/tfsec
 
 # This installation is necessary if we can usage checkov tool
 # See more details in: https://github.com/bridgecrewio/checkov/issues/1947
-RUN pip install --upgrade pip==21.3.1 && pip install --upgrade setuptools==59.1.1
+RUN pip install --upgrade pip==22.0.4 && pip install --upgrade setuptools==62.1.0
 RUN apk add --no-cache --virtual .build_deps build-base libffi-dev \
  && pip install --no-cache-dir -U checkov \
  && apk del .build_deps
-
-

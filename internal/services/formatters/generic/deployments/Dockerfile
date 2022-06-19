@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM azul/zulu-openjdk-alpine:17 AS jlink
+FROM azul/zulu-openjdk-alpine:18 AS jlink
 
 RUN "$JAVA_HOME/bin/jlink" --compress=2 \
     --module-path /opt/java/openjdk/jmods \
@@ -21,7 +21,10 @@ RUN "$JAVA_HOME/bin/jlink" --compress=2 \
 
 FROM python:3.10.4-alpine3.14
 
-RUN pip install semgrep==v0.85.0
+# This installation is necessary for semgrep tool dependency: ruamel.yaml.clib>=0.2.6
+# See more details in: https://stackoverflow.com/questions/69287269/installing-ruamel-yaml-clib-with-docker
+RUN apk add --no-cache gcc musl-dev python3-dev
+RUN pip install semgrep==v0.90.0
 
 COPY --from=jlink /jlinked /opt/jdk/
 
@@ -29,11 +32,10 @@ ENV JAVA_HOME=/opt/jdk
 
 RUN apk update && apk add curl
 
-# TODO: upgrade owasp dependency check to 7.x version
-RUN curl -o /bin/dependency-check-6.5.3-release.zip -LO https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.3/dependency-check-6.5.3-release.zip
+RUN curl -o /bin/dependency-check-7.1.0-release.zip -LO https://github.com/jeremylong/DependencyCheck/releases/download/v7.1.0/dependency-check-7.1.0-release.zip
 
-RUN unzip /bin/dependency-check-6.5.3-release.zip -d  /bin
+RUN unzip /bin/dependency-check-7.1.0-release.zip -d  /bin
 
-RUN rm /bin/dependency-check-6.5.3-release.zip
+RUN rm /bin/dependency-check-7.1.0-release.zip
 
-RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.24.4
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.27.1
