@@ -21,6 +21,8 @@ RUN "$JAVA_HOME/bin/jlink" --compress=2 \
 
 FROM python:3.10.4-alpine3.14
 
+RUN apk add build-base
+
 RUN pip install semgrep==v0.85.0
 
 COPY --from=jlink /jlinked /opt/jdk/

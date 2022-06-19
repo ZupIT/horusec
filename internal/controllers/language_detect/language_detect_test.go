@@ -70,6 +70,27 @@ func TestLanguageDetectIgnoreFiles(t *testing.T) {
 	assertTestLanguageDetectIgnoreFiles(t, cfg)
 }
 
+func TestLanguageDetectIgnoreFilesGithubFolder(t *testing.T) {
+	logger.LogSetOutput(io.Discard)
+
+	cfg := config.New()
+	cfg.EnableGitHistoryAnalysis = true
+	cfg.EnableCommitAuthor = true
+	cfg.FilesOrPathsToIgnore = []string{"**/leaks/**", "**/yaml/**"}
+	cfg.ProjectPath = filepath.Join(testutil.RootPath, "..", "horusec-examples-vulnerabilities")
+
+	analysisID := uuid.New()
+
+	ld := NewLanguageDetect(cfg, analysisID)
+
+	langs, err := ld.Detect(cfg.ProjectPath)
+	assert.Contains(t, langs, languages.Yaml)
+	assert.NoError(t, err)
+	assert.DirExists(t, filepath.Join(cfg.ProjectPath, ".horusec", analysisID.String(), ".git"))
+	assert.DirExists(t, filepath.Join(cfg.ProjectPath, ".horusec", analysisID.String(), ".github"))
+	assert.FileExists(t, filepath.Join(cfg.ProjectPath, ".horusec", analysisID.String(), ".github", "workflows", "license.yaml"))
+}
+
 func assertTestLanguageDetectIgnoreFiles(t *testing.T, cfg *config.Config) {
 	analysisID := uuid.New()
 

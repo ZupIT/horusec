@@ -651,7 +651,7 @@ func NewTestCase() []*TestCase {
 					testutil.StartFlagEnableGitHistory:   "true",
 					testutil.StartFlagEnableCommitAuthor: "true",
 					testutil.StartFlagAnalysisTimeout:    "10000",
-					testutil.StartFlagIgnore:             "**/ruby/**, **/javascript/**, **/python/**, **/go/**",
+					testutil.StartFlagIgnore:             "**/ruby/**, **/javascript/**, **/python/**, **/go/example*/**",
 				},
 			},
 			Expected: Expected{
