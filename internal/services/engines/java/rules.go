@@ -429,7 +429,7 @@ func NewNoListenToClipboard() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-23",
 			Name:        "No Listen To Clipboard",
-			Description: "ClipboardManager is a system service that allows you to register a listener for when the clipboard changes and some malwares also listen to Clipboard changes.",
+			Description: "ClipboardManager is a system service that allows you to register a listener for when the clipboard changes and some malwares also listen to Clipboard changes. For more information checkout CAPEC-637 (https://capec.mitre.org/data/definitions/637.html) and both CWE-200 (https://cwe.mitre.org/data/definitions/200.html), CWE-267 (https://cwe.mitre.org/data/definitions/267.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
@@ -446,7 +446,7 @@ func NewNoCopyContentToClipboard() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-24",
 			Name:        "No copy content to clipboard",
-			Description: "This App copies data to clipboard. Sensitive data should not be copied to clipboard as other applications can access it.",
+			Description: "This App copies data to clipboard. Sensitive data should not be copied to clipboard as other applications can access it. For more information checkout CAPEC-637 (https://capec.mitre.org/data/definitions/637.html) and both CWE-200 (https://cwe.mitre.org/data/definitions/200.html), CWE-267 (https://cwe.mitre.org/data/definitions/267.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
