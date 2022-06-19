@@ -50,5 +50,9 @@ jobs:
         with:
           docker_buildx: false
 
+      - name: Download Examples repository
+        run: |
+          git clone https://github.com/ZupIT/horusec-examples-vulnerabilities.git ../horusec-examples-vulnerabilities
+
       - name: test
         run: make test
