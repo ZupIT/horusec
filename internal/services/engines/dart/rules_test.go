@@ -116,7 +116,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 					CodeSample: "import 'package:flutter_sms/flutter_sms.dart';",
 					SourceLocation: engine.Location{
 						Filename: filepath.Join(tempDir, "HS-DART-6.test"),
-						Line:     1,
+						Line:     2,
 						Column:   28,
 					},
 				},
@@ -329,7 +329,7 @@ func TestRulesSafeCode(t *testing.T) {
 		{
 			Name:     "HS-DART-3",
 			Rule:     NewNoUseBiometricsTypeIOS(),
-			Src:      "",
+			Src:      SampleSafeHSDART3,
 			Filename: filepath.Join(tempDir, "HS-DART-3.test"),
 		},
 		{

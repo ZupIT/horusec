@@ -15,8 +15,6 @@
 package dart
 
 const (
-	SampleVulnerableHSDART6 = `import 'package:flutter_sms/flutter_sms.dart';
-`
 	SampleVulnerableHSDART1 = `
 ...
 final CpfExposedFromUserInput = "";
@@ -35,6 +33,22 @@ void onButtonClick() async {
 }
 ...
 `
+	SampleSafeHSDART1 = `
+...
+final CpfExposedFromUserInput = "";
+...
+void onButtonClick() async {
+	try {
+        // Safe code: Because not log information sensitive and only sent to backend api. 
+		var value = await ValidateCPFPost(CpfExposedFromUserInput)
+		...
+	} on HttpException {
+		...
+	}
+}
+...
+`
+
 	SampleVulnerableHSDART2 = `
 ...
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
@@ -61,6 +75,25 @@ void onButtonClick() async {
   }
 ...
 `
+	SampleSafeHSDART2 = `
+...
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  
+  @override
+  void initState() {
+    ...
+    super.initState();
+    // Safe code: Because not log information sensitive and only sent to backend api.
+    _firebaseMessaging.configure(
+      onLaunch: (Map<String, dynamic> response) async {
+        sendToAPI(response);
+        ...
+      },
+    );
+  }
+...
+`
+
 	SampleVulnerableHSDART3 = `
 List<BiometricType> availableBiometrics;
     await auth.getAvailableBiometrics();
@@ -73,11 +106,18 @@ if (Platform.isIOS) {
     }
 }
 `
+	SampleSafeHSDART3 = `// Don't use biometric mode `
+
 	SampleVulnerableHSDART4 = `
 // Possible vulnerable code: user can pass other path in your input and causes attacks in the application.
 final file = new File(FileFromUserInput);
 final document = XmlDocument.parse(file.readAsStringSync());
 `
+	SampleSafeHSDART4 = `
+final file = new File('static-file.xml');
+final document = XmlDocument.parse(file.readAsStringSync());
+`
+
 	SampleVulnerableHSDART5 = `
 ...
 static Future<HttpServer> SentToApi(
@@ -92,6 +132,22 @@ static Future<HttpServer> SentToApi(
     return _HttpServer.bindSecure('http://my-api.com.br', port, context, backlog, v6Only, requestClientCertificate, shared);
 }
 `
+	SampleSafeHSDART5 = `
+static Future<HttpServer> SentToApi(
+	int port,
+	SecurityContext context,
+	{int backlog = 0,
+	bool v6Only = false,
+	bool requestClientCertificate = false,
+	bool shared = false}
+) => _HttpServer.bindSecure('https://my-api.com.br', port, context, backlog, v6Only, requestClientCertificate, shared);
+`
+
+	SampleVulnerableHSDART6 = `
+import 'package:flutter_sms/flutter_sms.dart';
+`
+	SampleSafeHSDART6 = `// You can't use flutter_sms library`
+
 	SampleVulnerableHSDART7 = `
 import 'package:sprintf/sprintf.dart';
 import 'dart:html';
@@ -103,6 +159,18 @@ void RenderHTML(String content) {
 	document.body.append(element);
 }
 `
+	SampleSafeHSDART7 = `
+import 'package:sprintf/sprintf.dart';
+import 'dart:html';
+...
+
+void RenderHTML(String content) {
+	var element = new DivElement()
+		..textContent = content;
+	document.body.append(element);
+}
+`
+
 	SampleVulnerableHSDART8 = `
 import 'package:sprintf/sprintf.dart';
 import 'package:logging/logging.dart';
@@ -117,6 +185,19 @@ void ShowUserSensitiveInformation(String identity) {
 	sentToAPIUserIdentity(identity);
 }
 `
+	SampleSafeHSDART8 = `
+import 'package:logging/logging.dart';
+...
+final _logger = Logger('YourClassName');
+
+void ShowUserSensitiveInformation(String identity) {
+	print("send identity of the user to api");
+	_logger.info("send identity of the user to api");
+	sentToAPIUserIdentity(identity);
+}
+...
+`
+
 	SampleVulnerableHSDART9 = `
 import 'dart:convert';
 import 'package:convert/convert.dart';
@@ -131,6 +212,20 @@ generateMd5(String data) {
   return hex.encode(digest.bytes);
 }
 `
+	SampleSafeHSDART9 = `
+import 'dart:convert';
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart' as crypto;
+
+///Generate sha256 hash
+generateSha256(String data) {
+  var content = new Utf8Encoder().convert(data);
+  var sha256 = crypto.sha256;
+  var digest = sha256.convert(content);
+  return hex.encode(digest.bytes);
+}
+`
+
 	SampleVulnerableHSDART10 = `
 final SecurityContext context = SecurityContext(withTrustedRoots: false);
 // Possible vulnerable code: This code is bad because if you can exposed for MITM attacks
@@ -139,6 +234,13 @@ Socket socket = await Socket.connect(serverIp, port);
 socket = await SecureSocket.secure(socket, host: "server"
   , context: context, onBadCertificate: (cert) => true);
 `
+	SampleSafeHSDART10 = `
+final SecurityContext context = SecurityContext(withTrustedRoots: false);
+Socket socket = await Socket.connect(serverIp, port);
+socket = await SecureSocket.secure(socket, host: "server"
+  , context: context, onBadCertificate: (cert) => true);
+`
+
 	SampleVulnerableHSDART11 = `
 try {
 // Possible vulnerable code: This code is bad because your authentication can be passed easy form when exists only 1 method to authenticate
@@ -151,6 +253,18 @@ try {
   print("error using biometric auth: $e");
 }
 `
+	SampleSafeHSDART11 = `
+try {
+  authenticated = await auth.CheckTwoFactorAuthenticationAndAuthenticateWithBiometrics(
+	  localizedReason: 'Touch your finger on the sensor to login',
+	  useErrorDialogs: true,
+	  stickyAuth: false
+  );
+} catch (e) {
+  print("error using biometric auth: $e");
+}
+`
+
 	SampleVulnerableHSDART12 = `
 _getFromClipboard() async {
 	// Possible vulnerable code: Is not good idea read content from clipboard.
@@ -171,159 +285,6 @@ void sendToAPIToKeepChangesInDatabase() {
 	} on HttpException {
 		...
 	}
-}
-`
-	SampleVulnerableHSDART13 = `
-Database database = await openDatabase(path, version: 1,
-    onCreate: (Database db, int version) async {
-  await db.execute('CREATE TABLE Users (id INTEGER PRIMARY KEY, username TEXT, password TEXT);');
-});
-
-getCheckIfUserExists(String username) {
-	try {
-		// Possible vulnerable code: User can be pass malicious code and delete all data from your database by example.
-		List<Map> list = await database.rawQuery("SELECT * FROM Users WHERE username = '" + username + "';");
-		...
-	} on Exception {
-    	...
-	}
-}
-`
-	SampleVulnerableHSDART14 = `
-// Possible vulnerable code: If You get NSTemporaryDirectory you can get anywhere content from this directory
-let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true);
-`
-	SampleVulnerableHSDART15 = `
-// Possible vulnerable code: This code is bad because this type cryptography is easy of to be broken.
-final encrypter = Encrypter(AES(key, mode: AESMode.cts));
-`
-	SampleVulnerableHSDART16 = `
-HttpServer.bind('127.0.0.1', 8080).then((server){
-	server.listen((HttpRequest request){     
-		request.uri.queryParameters.forEach((param,val){
-			print(param + '-' + val);
-		});
-		
-		// Possible vulnerable code: When you allow any origin you can exposed to multiple attacks in your application
-		request.response.headers.add("Access-Control-Allow-Origin", "*");
-		request.response.headers.add("Access-Control-Allow-Methods", "POST,GET,DELETE,PUT,OPTIONS");
-		
-		request.response.statusCode = HttpStatus.OK;
-		request.response.write("Success!");
-		request.response.close();
-    });
-});
-`
-	SampleVulnerableHSDART17 = `
-getIPFromLoggedUser (List<String> UserParams) async {
-	// Possible vulnerable code: User can be inject malicious code and run others commands after this command 
-	var result = await Process.run("netcfg", [UserParams]);
-	return result.stdout
-}
-`
-)
-
-const (
-	SampleSafeHSDART1 = `
-...
-final CpfExposedFromUserInput = "";
-...
-void onButtonClick() async {
-	try {
-        // Safe code: Because not log information sensitive and only sent to backend api. 
-		var value = await ValidateCPFPost(CpfExposedFromUserInput)
-		...
-	} on HttpException {
-		...
-	}
-}
-...
-`
-	SampleSafeHSDART2 = `
-...
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  
-  @override
-  void initState() {
-    ...
-    super.initState();
-    // Safe code: Because not log information sensitive and only sent to backend api.
-    _firebaseMessaging.configure(
-      onLaunch: (Map<String, dynamic> response) async {
-        sendToAPI(response);
-        ...
-      },
-    );
-  }
-...
-`
-	SampleSafeHSDART4 = `
-final file = new File('static-file.xml');
-final document = XmlDocument.parse(file.readAsStringSync());
-`
-
-	SampleSafeHSDART5 = `
-static Future<HttpServer> SentToApi(
-	int port,
-	SecurityContext context,
-	{int backlog = 0,
-	bool v6Only = false,
-	bool requestClientCertificate = false,
-	bool shared = false}
-) => _HttpServer.bindSecure('https://my-api.com.br', port, context, backlog, v6Only, requestClientCertificate, shared);
-`
-	SampleSafeHSDART6 = `// You can't use sms library`
-	SampleSafeHSDART7 = `
-import 'package:sprintf/sprintf.dart';
-import 'dart:html';
-...
-
-void RenderHTML(String content) {
-	var element = new DivElement()
-		..textContent = content;
-	document.body.append(element);
-}
-`
-	SampleSafeHSDART8 = `
-import 'package:logging/logging.dart';
-...
-final _logger = Logger('YourClassName');
-
-void ShowUserSensitiveInformation(String identity) {
-	print("send identity of the user to api");
-	_logger.info("send identity of the user to api");
-	sentToAPIUserIdentity(identity);
-}
-...
-`
-	SampleSafeHSDART9 = `
-import 'dart:convert';
-import 'package:convert/convert.dart';
-import 'package:crypto/crypto.dart' as crypto;
-
-///Generate sha256 hash
-generateSha256(String data) {
-  var content = new Utf8Encoder().convert(data);
-  var sha256 = crypto.sha256;
-  var digest = sha256.convert(content);
-  return hex.encode(digest.bytes);
-}
-`
-	SampleSafeHSDART10 = `
-final SecurityContext context = SecurityContext(withTrustedRoots: false);
-Socket socket = await Socket.connect(serverIp, port);
-socket = await SecureSocket.secure(socket, host: "server"
-  , context: context, onBadCertificate: (cert) => true);
-`
-	SampleSafeHSDART11 = `
-try {
-  authenticated = await auth.CheckTwoFactorAuthenticationAndAuthenticateWithBiometrics(
-	  localizedReason: 'Touch your finger on the sensor to login',
-	  useErrorDialogs: true,
-	  stickyAuth: false
-  );
-} catch (e) {
-  print("error using biometric auth: $e");
 }
 `
 	SampleSafeHSDART12 = `
@@ -348,6 +309,23 @@ void sendToAPIToKeepChangesInDatabase() {
 	}
 }
 `
+
+	SampleVulnerableHSDART13 = `
+Database database = await openDatabase(path, version: 1,
+    onCreate: (Database db, int version) async {
+  await db.execute('CREATE TABLE Users (id INTEGER PRIMARY KEY, username TEXT, password TEXT);');
+});
+
+getCheckIfUserExists(String username) {
+	try {
+		// Possible vulnerable code: User can be pass malicious code and delete all data from your database by example.
+		List<Map> list = await database.rawQuery("SELECT * FROM Users WHERE username = '" + username + "';");
+		...
+	} on Exception {
+    	...
+	}
+}
+`
 	SampleSafeHSDART13 = `
 Database database = await openDatabase(path, version: 1,
     onCreate: (Database db, int version) async {
@@ -363,11 +341,39 @@ getCheckIfUserExists(String username) {
 	}
 }
 `
+
+	SampleVulnerableHSDART14 = `
+// Possible vulnerable code: If You get NSTemporaryDirectory you can get anywhere content from this directory
+let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true);
+`
 	SampleSafeHSDART14 = `
 let temporaryDirectoryURL = URL(fileURLWithPath: "Some/Other/Path", isDirectory: true)
 `
+
+	SampleVulnerableHSDART15 = `
+// Possible vulnerable code: This code is bad because this type cryptography is easy of to be broken.
+final encrypter = Encrypter(AES(key, mode: AESMode.cts));
+`
 	SampleSafeHSDART15 = `
 final encrypter = Encrypter(AES(key, mode: AESMode.cbc));
+`
+
+	SampleVulnerableHSDART16 = `
+HttpServer.bind('127.0.0.1', 8080).then((server){
+	server.listen((HttpRequest request){     
+		request.uri.queryParameters.forEach((param,val){
+			print(param + '-' + val);
+		});
+		
+		// Possible vulnerable code: When you allow any origin you can exposed to multiple attacks in your application
+		request.response.headers.add("Access-Control-Allow-Origin", "*");
+		request.response.headers.add("Access-Control-Allow-Methods", "POST,GET,DELETE,PUT,OPTIONS");
+		
+		request.response.statusCode = HttpStatus.OK;
+		request.response.write("Success!");
+		request.response.close();
+    });
+});
 `
 	SampleSafeHSDART16 = `
 HttpServer.bind('127.0.0.1', 8080).then((server){
@@ -384,6 +390,14 @@ HttpServer.bind('127.0.0.1', 8080).then((server){
 		request.response.close();
     });
 });
+`
+
+	SampleVulnerableHSDART17 = `
+getIPFromLoggedUser (List<String> UserParams) async {
+	// Possible vulnerable code: User can be inject malicious code and run others commands after this command 
+	var result = await Process.run("netcfg", [UserParams]);
+	return result.stdout
+}
 `
 	SampleSafeHSDART17 = `
 // You can get IP using library or interact with your backend application

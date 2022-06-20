@@ -62,12 +62,12 @@ func TestGetRules(t *testing.T) {
 		{
 			engine:             "Kotlin",
 			manager:            kotlin.NewRules(),
-			expectedTotalRules: 40,
+			expectedTotalRules: 39,
 		},
 		{
 			engine:             "Java",
 			manager:            java.NewRules(),
-			expectedTotalRules: 183,
+			expectedTotalRules: 182,
 		},
 		{
 			engine:             "Dart",

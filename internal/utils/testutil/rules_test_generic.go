@@ -52,6 +52,7 @@ func assertExpectedFindingAndRuleCase(t *testing.T, findings []engine.Finding, t
 func TestSafeCode(t *testing.T, testcases []*RuleTestCase) {
 	for _, tt := range testcases {
 		t.Run(tt.Name, func(t *testing.T) {
+			assert.NotEmpty(t, tt.Src)
 			Findings := executeRule(t, tt)
 			assert.Empty(t, Findings, "Expected not issues on safe code to Rule %s", tt.Name)
 			assert.Equal(t, tt.Name, tt.Rule.ID)
