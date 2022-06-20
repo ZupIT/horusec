@@ -134,6 +134,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagReturnError},
 			err:  true,
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
+				prompt.On("Ask")
 				analyzer.On("Analyze").Return(10, nil)
 				requirements.On("ValidateDocker").Return(nil)
 			},
@@ -151,6 +152,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			args: []string{testutil.StartFlagReturnError},
 			err:  true,
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
+				requirements.On("ValidateDocker")
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("", errors.New("some error"))
 			},
@@ -246,6 +248,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("N", nil)
+				requirements.On("ValidateDocker")
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)

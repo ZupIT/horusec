@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM zricethezav/gitleaks:v8.3.0
+FROM zricethezav/gitleaks:v8.8.7
 
 COPY ./internal/services/formatters/leaks/deployments/rules.toml /rules/rules.toml
 
