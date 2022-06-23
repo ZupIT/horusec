@@ -43,6 +43,7 @@ type CustomRule struct {
 	Name        string                `json:"name"`
 	Description string                `json:"description"`
 	Language    languages.Language    `json:"language"`
+	Filter      string                `json:"filter"`
 	Severity    severities.Severity   `json:"severity"`
 	Confidence  confidence.Confidence `json:"confidence"`
 	Type        MatchType             `json:"type"`
