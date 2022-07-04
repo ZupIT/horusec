@@ -57,7 +57,7 @@ func TestGetRules(t *testing.T) {
 		{
 			engine:             "Kubernetes",
 			manager:            kubernetes.NewRules(),
-			expectedTotalRules: 9,
+			expectedTotalRules: 10,
 		},
 		{
 			engine:             "Kotlin",

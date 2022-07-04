@@ -318,4 +318,34 @@ spec:
     max: 65535
   hostNetwork: false
 `
+	SampleVulnerableHSGHACTION1 = `
+name: Github Workflow
+on:
+  push:
+    branches: [ production ]
+jobs:
+  # Deploy to production
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Database logs
+        run: echo ${{ secrets.TOKEN }}
+`
+	SampleSafeHSGHACTION1 = `
+name: Github Workflow
+on:
+  push:
+    branches: [ production ]
+jobs:
+  # Deploy to production
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Database logs
+        run: echo "Don't log secret value"
+`
 )
