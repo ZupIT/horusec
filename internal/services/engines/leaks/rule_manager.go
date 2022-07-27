@@ -62,11 +62,7 @@ func Rules() []engine.Rule {
 		NewWPConfig(),
 
 		// privacy rules
-
-		// Regular rules
 		BrPrivacyLawHardCodedUserData(),
-
-		// Or rules
 		BrPrivacyLawExposureOfUserData(),
 	}
 }

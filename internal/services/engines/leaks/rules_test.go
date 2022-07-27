@@ -698,7 +698,7 @@ func TestRulesSafeCode(t *testing.T) {
 		},
 		{
 			Name:     "HS-PRIVACY-2",
-			Rule:     BrPrivacyLawExposureOfUserData(),
+			Rule:     BrPrivacyLawHardCodedUserData(),
 			Src:      SampleSafeHSPRIVACY2,
 			Filename: filepath.Join(tempDir, "HS-PRIVACY-2.test"),
 		},

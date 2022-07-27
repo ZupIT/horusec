@@ -538,7 +538,7 @@ define('AUTH_KEY', getenv("AUTH_KEY"));
 console.log("CPF: " + client.document);
 `
 
-	SampleSafeHSPRIVACY1 = `Don't log private/sensible data`
+	SampleSafeHSPRIVACY1 = `Don't log/print sensible data`
 
 	SampleVulnerableHSPRIVACY2 = `
 client = {

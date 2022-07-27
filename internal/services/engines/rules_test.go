@@ -52,7 +52,7 @@ func TestGetRules(t *testing.T) {
 		{
 			engine:             "Leaks",
 			manager:            leaks.NewRules(),
-			expectedTotalRules: 28,
+			expectedTotalRules: 30,
 		},
 		{
 			engine:             "Kubernetes",
