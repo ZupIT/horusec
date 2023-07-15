@@ -94,12 +94,12 @@ horusec version
 ### **Windows**
 - **amd64**
     ```sh
-    curl -k "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_amd64.exe" -o "./horusec.exe" -L
+    curl "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_amd64.exe" -o "./horusec.exe"
     ```
 
 - **arm64**
     ```sh
-    curl -k "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_arm64.exe" -o "./horusec.exe" -L
+    curl "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_arm64.exe" -o "./horusec.exe"
     ```
 
 #### **Check the installation**
