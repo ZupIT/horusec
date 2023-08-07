@@ -78,25 +78,13 @@ archives:
   - id: horusec
     builds:
       - horusec
-    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    name_template: horusec_{{ replace (replace .Os "Windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
     format: binary
-    replacements:
-      amd64: amd64
-      386: x86
-      arm64: arm64
-      darwin: mac
-      windows: win
   - id: horusec-standalone
     builds:
       - horusec-standalone
-    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}_stand_alone"
+    name_template: horusec_{{ replace (replace .Os "Windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}_stand_alone
     format: binary
-    replacements:
-      amd64: amd64
-      386: x86
-      arm64: arm64
-      darwin: mac
-      windows: win
 checksum:
   name_template: 'checksums.txt'
 release:
@@ -113,15 +101,9 @@ release:
 nfpms:
   - id: horusec
     package_name: horusec
-    file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    file_name_template: horusec_{{ replace (replace .Os "Windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
     builds:
       - horusec
-    replacements:
-      amd64: amd64
-      386: x86
-      arm64: arm64
-      darwin: mac
-      windows: win
     homepage: https://horusec.io/
     maintainer: ZupIT <horusec@zup.com.br>
     description: Horusec is an open source tool that improves identification of vulnerabilities in your project with just one command.
