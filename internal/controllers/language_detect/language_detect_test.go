@@ -77,7 +77,7 @@ func TestLanguageDetectIgnoreFilesGithubFolder(t *testing.T) {
 	cfg.EnableGitHistoryAnalysis = true
 	cfg.EnableCommitAuthor = true
 	cfg.FilesOrPathsToIgnore = []string{"**/leaks/**", "**/yaml/**"}
-	cfg.ProjectPath = filepath.Join(testutil.RootPath, "..", "horusec-examples-vulnerabilities")
+	cfg.ProjectPath = filepath.Join(testutil.RootPath)
 
 	analysisID := uuid.New()
 
