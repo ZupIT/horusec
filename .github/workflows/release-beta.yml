@@ -30,7 +30,6 @@ jobs:
       COSIGN_KEY_LOCATION: /tmp/cosign.key
       COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
 
-    if: contains('["wiliansilvazup","matheusalcantarazup","lucasbrunozup","nathanmartinszup","iancardosozup","oliveirafelipezup"]', github.actor)
     steps:
       - name: Checkout
         uses: actions/checkout@v3
