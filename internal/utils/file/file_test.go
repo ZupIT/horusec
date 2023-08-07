@@ -30,11 +30,11 @@ import (
 func TestGetFilePathIntoBasePath(t *testing.T) {
 	t.Run("Should return path correctly", func(t *testing.T) {
 		filePath := filepath.Join("file", "file_test.go")
-		volume := testutil.RootPath
+		volume := filepath.Join(testutil.RootPath, "internal")
 		response, err := file.GetPathFromFilename(filePath, volume)
 		assert.NoError(t, err)
 		assert.NotEqual(t, response, filePath)
-		assert.Equal(t, filepath.Join("internal", "utils", "file", "file_test.go"), response)
+		assert.Equal(t, filepath.Join("utils", "file", "file_test.go"), response)
 	})
 	t.Run("Should return filePath because not found", func(t *testing.T) {
 		filePath := "some_other_not_existing_file.go"
