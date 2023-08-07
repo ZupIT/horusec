@@ -29,7 +29,6 @@ jobs:
     env:
       COSIGN_KEY_LOCATION: /tmp/cosign.key
       COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-    if: contains('["wiliansilvazup","matheusalcantarazup","lucasbrunozup","nathanmartinszup","iancardosozup","oliveirafelipezup"]', github.actor)
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -91,7 +90,7 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
