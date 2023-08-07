@@ -77,7 +77,7 @@ func TestLanguageDetectIgnoreFilesGithubFolder(t *testing.T) {
 	cfg.EnableGitHistoryAnalysis = true
 	cfg.EnableCommitAuthor = true
 	cfg.FilesOrPathsToIgnore = []string{"**/leaks/**", "**/yaml/**"}
-	cfg.ProjectPath = filepath.Join(testutil.RootPath)
+	cfg.ProjectPath = testutil.RootPath
 
 	analysisID := uuid.New()
 
