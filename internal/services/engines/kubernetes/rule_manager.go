@@ -45,5 +45,8 @@ func Rules() []engine.Rule {
 
 		// Or rules
 		NewSeccompUnconfined(),
+
+		// Github Actions Rules
+		NewGHActionsSensitiveInformationExposureWithEcho(),
 	}
 }

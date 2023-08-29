@@ -170,6 +170,22 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+		{
+			Name:     "HS-GHACTION-1",
+			Rule:     NewGHActionsSensitiveInformationExposureWithEcho(),
+			Src:      SampleVulnerableHSGHACTION1,
+			Filename: filepath.Join(tempDir, "HS-GHACTION-1.test"),
+			Findings: []engine.Finding{
+				{
+					CodeSample: `run: echo ${{ secrets.TOKEN }}`,
+					SourceLocation: engine.Location{
+						Filename: filepath.Join(tempDir, "HS-GHACTION-1.test"),
+						Line:     14,
+						Column:   13,
+					},
+				},
+			},
+		},
 	}
 
 	testutil.TestVulnerableCode(t, testcases)
@@ -231,6 +247,12 @@ func TestRulesSafeCode(t *testing.T) {
 			Rule:     NewHostNetwork(),
 			Src:      SampleSafeHSKUBERNETES9,
 			Filename: filepath.Join(tempDir, "HS-KUBERNETES-9.test"),
+		},
+		{
+			Name:     "HS-GHACTION-1",
+			Rule:     NewGHActionsSensitiveInformationExposureWithEcho(),
+			Src:      SampleSafeHSGHACTION1,
+			Filename: filepath.Join(tempDir, "HS-GHACTION-1.test"),
 		},
 	}
 

@@ -197,3 +197,21 @@ func NewHostNetwork() *text.Rule {
 		},
 	}
 }
+
+func NewGHActionsSensitiveInformationExposureWithEcho() *text.Rule {
+	return &text.Rule{
+		Metadata: engine.Metadata{
+			ID:            "HS-GHACTION-1",
+			Name:          "Logging of sensitive information",
+			Description:   "Sensitive information could be exposed on action Logs.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.High.ToString(),
+			SafeExample:   SampleSafeHSGHACTION1,
+			UnsafeExample: SampleVulnerableHSGHACTION1,
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(echo|print)\D*\${{(\D*secrets.\D*)}}`),
+		},
+	}
+}
