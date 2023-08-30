@@ -99,7 +99,7 @@ func NewNoUseSHA1Hashing() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:            "HS-JAVASCRIPT-5",
-			Name:          "No use SAH1 hashing",
+			Name:          "No use SHA1 hashing",
 			Description:   "The SHA1 hash algorithm that was used is considered weak. It can also cause hash collisions. It is always recommended to use some CHF (Cryptographic Hash Function), which is mathematically strong and not reversible. SHA512 would be the most recommended hash for storing the password and it is also important to adopt some type of Salt, so that the Hash is more secure. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:      severities.High.ToString(),
 			Confidence:    confidence.Medium.ToString(),
