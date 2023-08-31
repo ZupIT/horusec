@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/ZupIT/horusec-devkit v1.0.24
-	github.com/ZupIT/horusec-engine v1.0.1
+	github.com/ZupIT/horusec-engine v1.0.2
 	github.com/bmatcuk/doublestar/v4 v4.0.2
 	github.com/briandowns/spinner v1.18.0
 	github.com/docker/docker v20.10.9+incompatible
