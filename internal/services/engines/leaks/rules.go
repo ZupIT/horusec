@@ -536,3 +536,40 @@ func NewWPConfig() *text.Rule {
 		},
 	}
 }
+
+func BrPrivacyLawExposureOfUserData() *text.Rule {
+	return &text.Rule{
+		Metadata: engine.Metadata{
+			ID:            "HS-PRIVACY-1",
+			Name:          "Exposure of User private Data",
+			Description:   "Brazilian Privacy Law (LGPD) prevents users IDs (cpf, rg) to be exposed in applications.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSPRIVACY1,
+			UnsafeExample: SampleVulnerableHSPRIVACY1,
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?i)\(*[\"\']?(cpf|rg)[:]\s*[%A-Za-z]*[\"\']?\s[%+,.format(]\s(client|user)?[.]?(doc|document)`),
+		},
+	}
+}
+
+func BrPrivacyLawHardCodedUserData() *text.Rule {
+	return &text.Rule{
+		Metadata: engine.Metadata{
+			ID:            "HS-PRIVACY-2",
+			Name:          "Hardcoded User Data related to Brazilian Privacy Law",
+			Description:   "Brazilian Privacy Law (LGPD) prevents user's data to be hardcoded in applications code.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSPRIVACY2,
+			UnsafeExample: SampleVulnerableHSPRIVACY2,
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?i)[\"\']?(cpf|rg)+[\"\']?\W?[:=]\W?[\"\']?[0-9.-]+[\"\']?`),
+		},
+	}
+
+}

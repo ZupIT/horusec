@@ -533,4 +533,22 @@ define('DB_PASSWORD', 'wen0221!');
 <?php
 define('AUTH_KEY', getenv("AUTH_KEY"));
 `
+
+	SampleVulnerableHSPRIVACY1 = `
+console.log("CPF: " + client.document);
+`
+
+	SampleSafeHSPRIVACY1 = `Don't log/print sensible data`
+
+	SampleVulnerableHSPRIVACY2 = `
+client = {
+  "cpf": "123.456.789-10"
+}
+`
+
+	SampleSafeHSPRIVACY2 = `
+client = {
+  "doc": json.loads(r.content)['doc']
+}
+`
 )

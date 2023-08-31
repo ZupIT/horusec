@@ -60,5 +60,9 @@ func Rules() []engine.Rule {
 		NewHardCodedPassword(),
 		NewPasswordExposedInHardcodedURL(),
 		NewWPConfig(),
+
+		// privacy rules
+		BrPrivacyLawHardCodedUserData(),
+		BrPrivacyLawExposureOfUserData(),
 	}
 }

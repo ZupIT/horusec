@@ -482,6 +482,38 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+		{
+			Name:     "HS-PRIVACY-1",
+			Rule:     BrPrivacyLawExposureOfUserData(),
+			Src:      SampleVulnerableHSPRIVACY1,
+			Filename: filepath.Join(tempDir, "HS-PRIVACY-1.test"),
+			Findings: []engine.Finding{
+				{
+					CodeSample: `console.log("CPF: " + client.document);`,
+					SourceLocation: engine.Location{
+						Filename: filepath.Join(tempDir, "HS-PRIVACY-1.test"),
+						Line:     2,
+						Column:   11,
+					},
+				},
+			},
+		},
+		{
+			Name:     "HS-PRIVACY-2",
+			Rule:     BrPrivacyLawHardCodedUserData(),
+			Src:      SampleVulnerableHSPRIVACY2,
+			Filename: filepath.Join(tempDir, "HS-PRIVACY-2.test"),
+			Findings: []engine.Finding{
+				{
+					CodeSample: `"cpf": "123.456.789-10"`,
+					SourceLocation: engine.Location{
+						Filename: filepath.Join(tempDir, "HS-PRIVACY-2.test"),
+						Line:     3,
+						Column:   2,
+					},
+				},
+			},
+		},
 	}
 
 	testutil.TestVulnerableCode(t, testcases)
@@ -657,6 +689,18 @@ func TestRulesSafeCode(t *testing.T) {
 			Rule:     NewWPConfig(),
 			Src:      SampleSafeHSLEAKS28,
 			Filename: filepath.Join(tempDir, "HS-LEAKS-28.test"),
+		},
+		{
+			Name:     "HS-PRIVACY-1",
+			Rule:     BrPrivacyLawExposureOfUserData(),
+			Src:      SampleSafeHSPRIVACY1,
+			Filename: filepath.Join(tempDir, "HS-PRIVACY-1.test"),
+		},
+		{
+			Name:     "HS-PRIVACY-2",
+			Rule:     BrPrivacyLawHardCodedUserData(),
+			Src:      SampleSafeHSPRIVACY2,
+			Filename: filepath.Join(tempDir, "HS-PRIVACY-2.test"),
 		},
 	}
 	testutil.TestSafeCode(t, testcases)
