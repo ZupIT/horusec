@@ -30,7 +30,7 @@ func NewCommandInjection() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-1",
 			Name:          "Command Injection",
-			Description:   "If a malicious user controls either the FileName or Arguments, he might be able to execute unwanted commands or add unwanted argument. This behavior would not be possible if input parameter are validate against a white-list of characters. For more information access: (https://security-code-scan.github.io/#SCS0001).",
+			Description:   "If a malicious user controls either the FileName or Arguments, he might be able to execute unwanted commands or add unwanted argument. For more information checkout the CWE-78 (https://cwe.mitre.org/data/definitions/78.html) and Security Code Scan reference: access: (https://security-code-scan.github.io/#SCS0001).",
 			Severity:      severities.Medium.ToString(),
 			Confidence:    confidence.Low.ToString(),
 			SafeExample:   SampleSafeHSCSHARP1,
@@ -50,7 +50,7 @@ func NewXPathInjection() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-2",
 			Name:          "XPath Injection",
-			Description:   "If the user input is not properly filtered, a malicious user could extend the XPath query. For more information access: (https://security-code-scan.github.io/#SCS0003).",
+			Description:   "If the user input is not properly filtered, a malicious user could extend the XPath query. For more information checkout the CWE-643 (https://cwe.mitre.org/data/definitions/643.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0003).",
 			Severity:      severities.Medium.ToString(),
 			Confidence:    confidence.Low.ToString(),
 			SafeExample:   SampleSafeHSCSHARP2,
@@ -70,8 +70,8 @@ func NewExternalEntityInjection() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-3",
 			Name:          "XML eXternal Entity Injection (XXE)",
-			Description:   "The XML parser is configured incorrectly. The operation could be vulnerable to XML eXternal Entity (XXE) processing. For more information access: (https://security-code-scan.github.io/#SCS0007).",
-			Severity:      severities.Medium.ToString(),
+			Description:   "The XML parser is configured incorrectly. The operation could be vulnerable to XML eXternal Entity (XXE) processing. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0007).",
+			Severity:      severities.High.ToString(),
 			Confidence:    confidence.High.ToString(),
 			SafeExample:   SampleSafeHSCSHARP3,
 			UnsafeExample: SampleVulnerableHSCSHARP3,
@@ -89,7 +89,7 @@ func NewPathTraversal() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-4",
 			Name:          "Path Traversal",
-			Description:   "A path traversal attack (also known as directory traversal) aims to access files and directories that are stored outside the expected directory.By manipulating variables that reference files with “dot-dot-slash (../)” sequences and its variations or by using absolute file paths, it may be possible to access arbitrary files and directories stored on file system including application source code or configuration and critical system files. For more information access: (https://security-code-scan.github.io/#SCS0018).",
+			Description:   "A path traversal attack (also known as directory traversal) aims to access files and directories that are stored outside the expected directory. For more information checkout the CWE-23 (https://cwe.mitre.org/data/definitions/23.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0018).",
 			Severity:      severities.Medium.ToString(),
 			Confidence:    confidence.Low.ToString(),
 			SafeExample:   SampleSafeHSCSHARP4,
@@ -109,7 +109,7 @@ func NewSQLInjectionWebControls() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-5",
 			Name:          "SQL Injection WebControls",
-			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0002).",
+			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0002).",
 			Severity:      severities.High.ToString(),
 			Confidence:    confidence.Low.ToString(),
 			SafeExample:   SampleSafeHSCSHARP5,
@@ -127,7 +127,7 @@ func NewWeakCipherOrCBCOrECBMode() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-6",
 			Name:          "Weak Cipher Mode",
-			Description:   "The cipher provides no way to detect that the data has been tampered with. If the cipher text can be controlled by an attacker, it could be altered without detection. The use of AES in CBC mode with a HMAC is recommended guaranteeing integrity and confidentiality. For more information access: (https://security-code-scan.github.io/#SCS0013).",
+			Description:   "The cipher provides no way to detect that the data has been tampered with. If the cipher text can be controlled by an attacker, it could be altered without detection. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0013).",
 			Severity:      severities.Medium.ToString(),
 			Confidence:    confidence.Low.ToString(),
 			SafeExample:   SampleSafeHSCSHARP6,
@@ -149,7 +149,7 @@ func NewFormsAuthenticationCookielessMode() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-7",
 			Name:          "Forms Authentication Cookieless Mode",
-			Description:   "Authentication cookies should not be sent in the URL. Doing so allows attackers to gain unauthorized access to authentication tokens (web server logs, referrer headers, and browser history) and more easily perform session fixation / hijacking attacks. For more information checkout the CWE-598 (https://cwe.mitre.org/data/definitions/598.html) advisory.",
+			Description:   "Authentication cookies should not be sent in the URL. Doing so allows attackers to gain unauthorized access to authentication tokens (web server logs, referrer headers, and browser history) and more easily perform session fixation/hijacking attacks. For more information checkout the CWE-598 (https://cwe.mitre.org/data/definitions/598.html) advisory.",
 			Severity:      severities.Medium.ToString(),
 			Confidence:    confidence.Low.ToString(),
 			SafeExample:   SampleSafeHSCSHARP7,
@@ -554,7 +554,7 @@ func NewLDAPInjection() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-28",
 			Name:          "LDAP Injection",
-			Description:   "The dynamic value passed to the LDAP query should be validated. Risk: If the user input is not properly filtered, a malicious user could extend the LDAP query. Solution: Use proper encoder (LdapFilterEncode or LdapDistinguishedNameEncode) from AntiXSS library:. For more information access: (https://security-code-scan.github.io/#SCS0031) or (https://security-code-scan.github.io/#SCS0026) or CWE-90 (https://cwe.mitre.org/data/definitions/90.html) advisory.",
+			Description:   "The dynamic value passed to the LDAP query should be validated. If the user input is not properly filtered, a malicious user could extend the LDAP query. For more information access: (https://security-code-scan.github.io/#SCS0031), (https://security-code-scan.github.io/#SCS0026) and CWE-90 (https://cwe.mitre.org/data/definitions/90.html) advisory.",
 			Severity:      severities.High.ToString(),
 			Confidence:    confidence.High.ToString(),
 			SafeExample:   SampleSafeHSCSHARP28,
@@ -573,7 +573,7 @@ func NewSQLInjectionLinq() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-29",
 			Name:          "SQL Injection LINQ",
-			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database.. For more information access: (https://security-code-scan.github.io/#SCS0002).",
+			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0002).",
 			Severity:      severities.High.ToString(),
 			Confidence:    confidence.Low.ToString(),
 			SafeExample:   SampleSafeHSCSHARP29,
@@ -591,21 +591,7 @@ func NewInsecureDeserialization() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:   "HS-CSHARP-30",
 			Name: "Insecure Deserialization",
-			Description: `Arbitrary code execution, full application compromise or denial of service. An attacker may pass specially crafted serialized .NET object of specific class that will execute malicious code during the construction of the object.
-Solution:
-There is no simple fix. Do not deserialize untrusted data: user input, cookies or data that crosses trust boundaries.
-
-In case it is unavoidable:
-1) If serialization is done on the server side, then crosses trust boundary, but is not modified and is returned back (like cookie for example) - use signed cryptography (HMAC for instance) to ensure it wasn’t tampered.
-2) Do not get the type to deserialize into from untrusted source: the serialized stream itself or other untrusted parameter. BinaryFormatter for example reads type information from serialized stream itself and can’t be used with untrusted streams:
-
-// DO NOT DO THIS!
-var thing = (MyType)new BinaryFormatter().Deserialize(untrustedStream);
-
-JavaScriptSerializer for instance without a JavaScriptTypeResolver is safe because it doesn’t resolve types at all:
-3) If the library supports implement a callback that verifies if the object and its properties are of expected type (don’t blacklist, use whitelist!)
-4) Serialize simple Data Transfer Objects (DTO) only. Do not serialize/deserialize type information. For example, use only TypeNameHandling.None (the default) in Json.net
-For more information access: (https://security-code-scan.github.io/#SCS0028).`,
+			Description: "Arbitrary code execution, full application compromise or denial of service. An attacker may pass specially crafted serialized .NET object of specific class that will execute malicious code during the construction of the object. For more information checkout the CWE-502 (https://cwe.mitre.org/data/definitions/502.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0028).",
 			Severity:   severities.Low.ToString(),
 			Confidence: confidence.Low.ToString(),
 		},
@@ -660,7 +646,7 @@ func NewPasswordComplexityDefault() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-33",
 			Name:          "Password Complexity Default",
-			Description:   "PasswordValidator should have at least two requirements for better security, the RequiredLength property must be set with a minimum value of 8. For more information access: (https://security-code-scan.github.io/#SCS0027).",
+			Description:   "PasswordValidator should have at least two requirements for better security (RequiredLength, RequireDigit, RequireLowercase, RequireUppercase and/or RequireNonLetterOrDigit). For more information checkout the CWE-521 (https://cwe.mitre.org/data/definitions/521.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0033).",
 			Severity:      severities.Low.ToString(),
 			Confidence:    confidence.Low.ToString(),
 			SafeExample:   SampleSafeHSCSHARP33,
@@ -720,7 +706,7 @@ func NewNoInputVariable() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-36",
 			Name:          "No input variable",
-			Description:   "The application appears to allow XSS through an unencrypted / unauthorized input variable. https://owasp.org/www-community/attacks/xss/. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Description:   "The application appears to allow XSS through an unencrypted/unauthorized input variable. https://owasp.org/www-community/attacks/xss/. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
 			Severity:      severities.High.ToString(),
 			Confidence:    confidence.High.ToString(),
 			SafeExample:   SampleSafeHSCSHARP36,
@@ -781,7 +767,7 @@ func NewOutputCacheConflict() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-39",
 			Name:          "OutputCache Conflict",
-			Description:   "Having the annotation [OutputCache] will disable the annotation [Authorize] for the requests following the first one. For more information access: (https://security-code-scan.github.io/#SCS0019).",
+			Description:   "Having the annotation [OutputCache] will disable the annotation [Authorize] for the requests following the first one. For more information checkout CWE-524 (https://cwe.mitre.org/data/definitions/524.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0019).",
 			Severity:      severities.Medium.ToString(),
 			Confidence:    confidence.Low.ToString(),
 			SafeExample:   SampleSafeHSCSHARP39,
@@ -799,7 +785,7 @@ func NewOpenRedirect() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-40",
 			Name:          "Open Redirect",
-			Description:   "Your site may be used in phishing attacks. An attacker may craft a trustworthy looking link to your site redirecting a victim to a similar looking malicious site: 'http://yourdomain.com?redirect=https://urdomain.com/login'. For more information access: (https://security-code-scan.github.io/#SCS0027).",
+			Description:   "Your site may be used in phishing attacks. An attacker may craft a trustworthy looking link to your site redirecting a victim to a similar looking malicious site. For more information checkout CWE-601 (https://cwe.mitre.org/data/definitions/601.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0027).",
 			Severity:      severities.Low.ToString(),
 			Confidence:    confidence.Low.ToString(),
 			SafeExample:   SampleSafeHSCSHARP40,
@@ -817,7 +803,7 @@ func NewRequestValidationDisabledAttribute() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-41",
 			Name:          "Request Validation Disabled (Attribute)",
-			Description:   "Request validation is disabled. Request validation allows the filtering of some XSS patterns submitted to the application. For more information access: (https://security-code-scan.github.io/#SCS0017).",
+			Description:   "Request validation is disabled. Request validation allows the filtering of some XSS patterns submitted to the application. For more information checkout CWE-554 (https://cwe.mitre.org/data/definitions/554.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0017).",
 			Severity:      severities.High.ToString(),
 			Confidence:    confidence.High.ToString(),
 			SafeExample:   SampleSafeHSCSHARP41,
@@ -835,7 +821,7 @@ func NewSQLInjectionOLEDB() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-42",
 			Name:          "SQL Injection OLE DB",
-			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0020).",
+			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information checkout CWE-89 (https://cwe.mitre.org/data/definitions/89.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0020).",
 			Severity:      severities.High.ToString(),
 			Confidence:    confidence.Medium.ToString(),
 			SafeExample:   SampleSafeHSCSHARP42,
@@ -871,7 +857,7 @@ func NewSQLInjectionMsSQLDataProvider() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-44",
 			Name:          "SQL Injection MsSQL Data Provider",
-			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0026).",
+			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information checkout CWE-89 (https://cwe.mitre.org/data/definitions/89.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0026).",
 			Severity:      severities.High.ToString(),
 			Confidence:    confidence.Medium.ToString(),
 			SafeExample:   SampleSafeHSCSHARP44,
@@ -889,7 +875,7 @@ func NewRequestValidationIsEnabledOnlyForPages() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-45",
 			Name:          "Request validation is enabled only for pages",
-			Description:   "The requestValidationMode which provides additional protection against XSS is enabled only for pages, not for all HTTP requests in configuration file. For more information access: (https://security-code-scan.github.io/#SCS0030).",
+			Description:   "The requestValidationMode which provides additional protection against XSS is enabled only for pages, not for all HTTP requests in configuration file. For more information checkout CWE-554 (https://cwe.mitre.org/data/definitions/554.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0030).",
 			Severity:      severities.High.ToString(),
 			Confidence:    confidence.High.ToString(),
 			SafeExample:   SampleSafeHSCSHARP45,
@@ -943,7 +929,7 @@ func NewSQLInjectionNhibernate() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-48",
 			Name:          "SQL Injection Nhibernate",
-			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0037).",
+			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information checkout CWE-89 (https://cwe.mitre.org/data/definitions/89.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0037).",
 			Severity:      severities.High.ToString(),
 			Confidence:    confidence.Medium.ToString(),
 			SafeExample:   SampleSafeHSCSHARP48,
@@ -979,7 +965,7 @@ func NewSQLInjectionNpgsql() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-50",
 			Name:          "SQL Injection Npgsql",
-			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0039).",
+			Description:   "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information checkout CWE-89 (https://cwe.mitre.org/data/definitions/89.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0039).",
 			Severity:      severities.High.ToString(),
 			Confidence:    confidence.Medium.ToString(),
 			SafeExample:   SampleSafeHSCSHARP50,
@@ -997,7 +983,7 @@ func NewCertificateValidationDisabled() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-51",
 			Name:          "Certificate Validation Disabled",
-			Description:   "Disabling certificate validation is often used to connect easily to a host that is not signed by a root certificate authority. As a consequence, this is vulnerable to Man-in-the-middle attacks since the client will trust any certificate. For more information access: (https://security-code-scan.github.io/#SCS0004).",
+			Description:   "Disabling certificate validation is often used to connect easily to a host that is not signed by a root certificate authority. As a consequence, this is vulnerable to Man-in-the-middle attacks since the client will trust any certificate. For more information checkout CWE-295 (https://cwe.mitre.org/data/definitions/295.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0004).",
 			Severity:      severities.Medium.ToString(),
 			Confidence:    confidence.High.ToString(),
 			SafeExample:   SampleSafeHSCSHARP51,
@@ -1015,7 +1001,7 @@ func NewWeakCipherAlgorithm() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:            "HS-CSHARP-52",
 			Name:          "Weak cipher algorithm",
-			Description:   "Broken or deprecated ciphers have typically known weakness. A attacker might be able to brute force the secret key use for the encryption. The confidentiality and integrity of the information encrypted is at risk. For more information access: (https://security-code-scan.github.io/#SCS0010).",
+			Description:   "Broken or deprecated ciphers have typically known weakness. A attacker might be able to brute force the secret key use for the encryption. For more information checkout CWE-327 (https://cwe.mitre.org/data/definitions/327.html) and Security Code Scan reference: (https://security-code-scan.github.io/#SCS0010).",
 			Severity:      severities.Medium.ToString(),
 			Confidence:    confidence.Low.ToString(),
 			SafeExample:   SampleSafeHSCSHARP52,
