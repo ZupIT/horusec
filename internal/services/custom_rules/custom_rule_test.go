@@ -128,6 +128,7 @@ func TestValidateAllLanguages(t *testing.T) {
 				ID:         "HS-CSHARP-10000",
 				Severity:   severities.Low,
 				Confidence: confidence.Low,
+				Filter:     "**/*",
 				Type:       Regular,
 				Language:   languages.CSharp,
 			},
@@ -141,6 +142,7 @@ func TestValidateAllLanguages(t *testing.T) {
 				ID:         "HS-DART-10000",
 				Severity:   severities.Low,
 				Confidence: confidence.Low,
+				Filter:     "**/*",
 				Type:       Regular,
 				Language:   languages.Dart,
 			},
@@ -154,6 +156,7 @@ func TestValidateAllLanguages(t *testing.T) {
 				ID:         "HS-JAVA-10000",
 				Severity:   severities.Low,
 				Confidence: confidence.Low,
+				Filter:     "**/*",
 				Type:       Regular,
 				Language:   languages.Java,
 			},
@@ -167,6 +170,7 @@ func TestValidateAllLanguages(t *testing.T) {
 				ID:         "HS-KOTLIN-10000",
 				Severity:   severities.Low,
 				Confidence: confidence.Low,
+				Filter:     "**/*",
 				Type:       Regular,
 				Language:   languages.Kotlin,
 			},
@@ -180,6 +184,7 @@ func TestValidateAllLanguages(t *testing.T) {
 				ID:         "HS-YAML-10000",
 				Severity:   severities.Low,
 				Confidence: confidence.Low,
+				Filter:     "**/*",
 				Type:       Regular,
 				Language:   languages.Yaml,
 			},
@@ -193,6 +198,7 @@ func TestValidateAllLanguages(t *testing.T) {
 				ID:         "HS-LEAKS-10000",
 				Severity:   severities.Low,
 				Confidence: confidence.Low,
+				Filter:     "**/*",
 				Type:       Regular,
 				Language:   languages.Leaks,
 			},
@@ -206,6 +212,7 @@ func TestValidateAllLanguages(t *testing.T) {
 				ID:         "HS-JAVASCRIPT-10000",
 				Severity:   severities.Low,
 				Confidence: confidence.Low,
+				Filter:     "**/*",
 				Type:       Regular,
 				Language:   languages.Javascript,
 			},
@@ -219,6 +226,7 @@ func TestValidateAllLanguages(t *testing.T) {
 				ID:         "HS-NGINX-10000",
 				Severity:   severities.Low,
 				Confidence: confidence.Low,
+				Filter:     "**/*",
 				Type:       Regular,
 				Language:   languages.Nginx,
 			},
@@ -232,6 +240,7 @@ func TestValidateAllLanguages(t *testing.T) {
 				ID:         "HS-NOT-CORRECT-10000",
 				Severity:   severities.Low,
 				Confidence: confidence.Low,
+				Filter:     "**/*",
 				Type:       Regular,
 				Language:   languages.Nginx,
 			},
@@ -245,6 +254,7 @@ func TestValidateAllLanguages(t *testing.T) {
 				ID:         "HS-JAVA-10000",
 				Severity:   severities.Low,
 				Confidence: confidence.Low,
+				Filter:     "**/*",
 				Type:       Regular,
 				Language:   languages.Language("DOESNTEXIST"),
 			},
@@ -380,7 +390,7 @@ func TestToString(t *testing.T) {
 		validate func(s string)
 	}
 
-	crStr := "{\"id\":\"test123\",\"name\":\"\",\"description\":\"\",\"language\":\"\",\"severity\":\"\",\"confidence\":\"\",\"type\":\"\",\"expressions\":null}"
+	crStr := "{\"id\":\"test123\",\"name\":\"\",\"description\":\"\",\"language\":\"\",\"filter\":\"\",\"severity\":\"\",\"confidence\":\"\",\"type\":\"\",\"expressions\":null}"
 	tests := []test{
 		{
 			name: "should log an error when failed to compile expression",

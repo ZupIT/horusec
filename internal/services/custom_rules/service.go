@@ -108,6 +108,7 @@ func (s *Service) parseCustomRuleToRule(rule *CustomRule) engine.Rule {
 			ID:          rule.ID,
 			Name:        rule.Name,
 			Description: rule.Description,
+			Filter:      rule.Filter,
 			Severity:    rule.Severity.ToString(),
 			Confidence:  rule.Confidence.ToString(),
 		},
