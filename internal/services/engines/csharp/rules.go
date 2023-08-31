@@ -1115,6 +1115,10 @@ func NewWeakHashingFunctionMd5OrSha1() *text.Rule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`new\sSHA1CryptoServiceProvider\(`),
 			regexp.MustCompile(`new\sMD5CryptoServiceProvider\(`),
+			regexp.MustCompile(`\sSHA1.Create\(`),
+			regexp.MustCompile(`\sMD5.Create\(`),
+			regexp.MustCompile(`\sHMACMD5\(`),
+			regexp.MustCompile(`\sHMACSHA1\(`),
 		},
 	}
 }
