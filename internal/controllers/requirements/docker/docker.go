@@ -73,7 +73,7 @@ func validateIfDockerIsRunningInMinVersion(response string) error {
 		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, ErrMinVersion)
 		return err
 	}
-	if version <= MinVersionDockerAccept && subversion < MinSubVersionDockerAccept {
+	if version <= MinVersionDockerAccept || subversion < MinSubVersionDockerAccept {
 		fmt.Print("\n")
 		logger.LogInfo(messages.MsgInfoDockerLowerVersion)
 		fmt.Print("\n")
@@ -83,11 +83,12 @@ func validateIfDockerIsRunningInMinVersion(response string) error {
 }
 
 func getVersionAndSubVersion(fullVersion string) (int, int, error) {
-	version, err := strconv.Atoi(fullVersion[0:2])
+	splited := strings.Split(fullVersion, ".");
+	version, err := strconv.Atoi(splited[0])
 	if err != nil {
 		return 0, 0, ErrDockerNotInstalled
 	}
-	subversion, err := strconv.Atoi(strings.Split(fullVersion[3:5], ".")[0])
+	subversion, err := strconv.Atoi(splited[1])
 	if err != nil {
 		return 0, 0, ErrDockerNotInstalled
 	}
