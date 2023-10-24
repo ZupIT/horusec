@@ -73,7 +73,7 @@ func validateIfDockerIsRunningInMinVersion(response string) error {
 		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, ErrMinVersion)
 		return err
 	}
-	if version <= MinVersionDockerAccept || subversion < MinSubVersionDockerAccept {
+	if version < MinVersionDockerAccept || (version == MinVersionDockerAccept && subversion < MinSubVersionDockerAccept) {
 		fmt.Print("\n")
 		logger.LogInfo(messages.MsgInfoDockerLowerVersion)
 		fmt.Print("\n")
