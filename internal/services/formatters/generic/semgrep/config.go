@@ -13,8 +13,10 @@
 // limitations under the License.
 
 package semgrep
-
-const CMD = `
+                  //removed --config=p/r2c-ci from the command 
+				//  specifies a Semgrep configuration to use. In this case, it seems to be referencing a configuration named r2c-ci provided by the p organization or repository.
+const CMD = ` 
 	    {{WORK_DIR}}
-		semgrep --disable-metrics --config=p/r2c-ci -q --json .
+		semgrep scan --config auto -q --json .
   `
+
