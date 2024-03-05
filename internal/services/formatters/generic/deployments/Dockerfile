@@ -23,7 +23,7 @@ FROM python:3.10.4-alpine3.14
 
 RUN apk add build-base
 
-RUN pip install semgrep==v1.62.0
+RUN pip install semgrep==v1.63.0
 
 COPY --from=jlink /jlinked /opt/jdk/
 
