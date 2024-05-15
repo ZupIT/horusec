@@ -180,7 +180,7 @@ For more information, [**check out the documentation**](https://docs.horusec.io/
 
 ### **Features**
 See below: 
-- Analyzes simultaneously 18 languages with 20 different security tools to increase accuracy;
+- Analyzes 18 languages simultaneously with 20 different security tools to increase accuracy;
 - Search for their historical git by secrets and other contents exposed;
 - Your analysis can be fully configurable, [**see all CLI available resources**](https://docs.horusec.io/docs/cli/commands-and-flags/#3-flags).
 
