@@ -93,6 +93,7 @@ func (s *Service) openCustomRulesJSONFile() (customRules []*CustomRule, err erro
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 
 	bytes, err := io.ReadAll(file)
 	if err != nil {
