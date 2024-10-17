@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM azul/zulu-openjdk-alpine:17 AS jlink
+FROM azul/zulu-openjdk-alpine:17.0.13 AS jlink
 
 RUN "$JAVA_HOME/bin/jlink" --compress=2 \
     --module-path /opt/java/openjdk/jmods \
