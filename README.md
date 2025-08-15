@@ -44,15 +44,11 @@
 ### 8. [**License**](#license)
 ### 9. [**Community**](#community)
 
-
-
-<br>
-<br>
 <br>
 
 # **About**
-Horusec is an open source tool that performs a static code analysis to identify security flaws during the development process. Currently, the languages for analysis are C#, Java, Kotlin, Python, Ruby, Golang, Terraform, Javascript, Typescript, Kubernetes, PHP, C, HTML, JSON, Dart, Elixir, Shell, Nginx. 
-The tool has options to search for key leaks and security flaws in all your project's files, as well as in Git history. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI /CD mats. 
+Horusec is an open source tool that performs a static code analysis to identify security flaws during the development process. Currently, the languages for analysis are C#, Java, Kotlin, Python, Ruby, Golang, Terraform, JavaScript, Typescript, Kubernetes, PHP, C, HTML, JSON, Dart, Elixir, Shell, Nginx. 
+The tool has options to search for key leaks and security flaws in all your project's files, as well as in Git history. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI/CD mats. 
 
 Check out our [**Documentation**](https://docs.horusec.io/docs/overview/), you will see the complete list of tools and languages Horusec performs analysis.
 
@@ -65,8 +61,7 @@ Check out our [**Documentation**](https://docs.horusec.io/docs/overview/), you w
 # **Getting started**
 
 ## **Requirements**
-
-- Docker
+### **Docker**
 
 You need Docker installed in your machine in order to run Horusec with all the tools we use.
 If you don't have Docker, we have a [**flag**](https://docs.horusec.io/docs/cli/commands-and-flags/#3-flags) `-D true` that will disable the dependency, but it also loses much of the analysis power. 
@@ -168,7 +163,7 @@ horusec start -p <PATH_TO_YOUR_PROJECT> -a <YOUR_AUTHORIZATION_TOKEN>
 
 Check out [**the tutorial on how to create an authorization token through Horusec Manager Web Service**](https://docs.horusec.io/docs/tutorials/how-to-create-an-authorization-token).
 
-**WARNING:** Our web services was moved to a [**new repository**](https://github.com/ZupIT/horusec-platform). You need to upgrade to v2, check out [**how to migrate from v1 to v2**](https://docs.horusec.io/docs/migrate-v1-to-v2).
+**WARNING:** Our web services were moved to a [**new repository**](https://github.com/ZupIT/horusec-platform). You need to upgrade to v2, check out [**how to migrate from v1 to v2**](https://docs.horusec.io/docs/migrate-v1-to-v2).
 
 ### **Using Visual Studio Code**
 You can analyze your project using Horusec's Visual Studio Code extension.
@@ -182,7 +177,7 @@ For more information, [**check out the documentation**](https://docs.horusec.io/
 See below: 
 - Analyzes simultaneously 18 languages with 20 different security tools to increase accuracy;
 - Search for their historical git by secrets and other contents exposed;
-- Your analysis can be fully configurable, [**see all CLI available resources**](https://docs.horusec.io/docs/cli/commands-and-flags/#3-flags).
+- Your analysis can be fully configurable, [**see all available CLI resources**](https://docs.horusec.io/docs/cli/commands-and-flags/#3-flags).
 
 ## **Documentation**
 You can find Horusec's documentation on our [**website**](https://docs.horusec.io/docs/overview/).
@@ -212,7 +207,7 @@ Follow one of these two methods to add DCO to your commits:
  
 **1. Command line**
  Follow the steps: 
- **Step 1:** Configure your local git environment adding the same name and e-mail configured at your GitHub account. It helps to sign commits manually during reviews and suggestions.
+ **Step 1:** Configure your local git environment adding the same name and e-mail configured at your GitHub account. It helps you sign commits manually during reviews and suggestions.
 
  ```
 git config --global user.name “Name”
@@ -230,7 +225,7 @@ You can also manually sign your commits during GitHub reviews and suggestions, f
 **Step 1:** When the commit changes box opens, manually type or paste your signature in the comment box, see the example:
 
 ```
-Signed-off-by: Name < e-mail address >
+Signed-off-by: Name <e-mail address>
 ```
 
 For this method, your name and e-mail must be the same registered on your GitHub account.
