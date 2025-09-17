@@ -567,6 +567,60 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 				requirements.AssertNotCalled(t, "ValidateDocker")
 			},
 		},
+		{
+			name: "Should execute command exec without error and enable commit author flag (--enable-commit-author)",
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagEnableCommitAuthor},
+			err:  false,
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
+				prompt.On("Ask").Return("Y", nil)
+				analyzer.On("Analyze").Return(0, nil)
+				requirements.On("ValidateDocker").Return(nil)
+			},
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.True(t, cfg.EnableCommitAuthor)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error and set container bind project path (--container-bind-project-path)",
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagContainerBindProjectPath, "/host/project/path"},
+			err:  false,
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
+				prompt.On("Ask").Return("Y", nil)
+				analyzer.On("Analyze").Return(0, nil)
+				requirements.On("ValidateDocker").Return(nil)
+			},
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.Equal(t, "/host/project/path", cfg.ContainerBindProjectPath)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error and set custom rules path (--custom-rules-path)",
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagCustomRulesPath, "/path/to/custom/rules"},
+			err:  false,
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
+				prompt.On("Ask").Return("Y", nil)
+				analyzer.On("Analyze").Return(0, nil)
+				requirements.On("ValidateDocker").Return(nil)
+			},
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.Equal(t, "/path/to/custom/rules", cfg.CustomRulesPath)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
 	}
 	for _, tt := range testcases {
 		t.Run(tt.name, func(t *testing.T) {
