@@ -34,7 +34,7 @@ jobs:
       - name: Cosign Installer
         uses: sigstore/cosign-installer@main
         with:
-          cosign-release: 'v1.2.0'
+          cosign-release: 'v1.13.6'
 
       - name: Install cosign private key
         run: 'echo "$COSIGN_KEY" > $COSIGN_KEY_LOCATION'

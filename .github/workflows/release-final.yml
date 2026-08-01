@@ -48,7 +48,7 @@ jobs:
       - name: Cosign Installer
         uses: sigstore/cosign-installer@main
         with:
-          cosign-release: 'v1.2.0'
+          cosign-release: 'v1.13.6'
 
       - name: Install Mage
         run: go install github.com/magefile/mage@v1.11
