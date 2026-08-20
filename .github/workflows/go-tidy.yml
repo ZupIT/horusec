@@ -27,7 +27,7 @@ jobs:
       - name: Set up Golang
         uses: actions/setup-go@v3
         with:
-          go-version: 1.17
+          go-version: 1.27
       ## Run go mod tidy and then check if there was a diff. If so, fail the check.
       - name: Check go mod tidy diff
         run: if [ $(go mod tidy && git diff | wc -l) -gt 0 ]; then git diff && exit 1; fi
