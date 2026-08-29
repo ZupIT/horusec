@@ -6,7 +6,7 @@ require (
 	github.com/ZupIT/horusec-devkit v1.0.24
 	github.com/ZupIT/horusec-engine v1.0.1
 	github.com/bmatcuk/doublestar/v4 v4.0.2
-	github.com/briandowns/spinner v1.18.0
+	github.com/briandowns/spinner v1.23.2
 	github.com/docker/docker v20.10.9+incompatible
 	github.com/go-enry/go-enry/v2 v2.8.2
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
@@ -63,7 +63,8 @@ require (
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
 	golang.org/x/net v0.0.0-20220114011407-0dd24b26b47d // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20220315194320-039c03cc5b86 // indirect
+	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
+	golang.org/x/term v0.1.0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	google.golang.org/genproto v0.0.0-20220114231437-d2e6a121cae0 // indirect
