@@ -95,6 +95,8 @@ github.com/ZupIT/horusec-devkit v1.0.24 h1:GGW6LyyvVvmN2+2/miPjOZ6E6BhE9k7Tw0rVc
 github.com/ZupIT/horusec-devkit v1.0.24/go.mod h1:l1vuCb/lxyGZ8vIgW3EO5CS6aJUukGprD9UB6FwU16w=
 github.com/ZupIT/horusec-engine v1.0.1 h1:RGBsQAYRwOhVeuJGttgPBSgvPfGjOhnjWlgNvTkWAns=
 github.com/ZupIT/horusec-engine v1.0.1/go.mod h1:lamAoErjl0M3voYEr+J1T15Raw4BJdAaMM/wQCsvVlo=
+github.com/ZupIT/horusec-engine v1.0.2 h1:htkmprwIZU+qmyiPEFPZZSKoAnO4UBgHaJhdwjuF380=
+github.com/ZupIT/horusec-engine v1.0.2/go.mod h1:jdjlUpQHczpaqvPWR0yQv4wx3A7Hkp3rR8Cdeys3f9U=
 github.com/agiledragon/gomonkey/v2 v2.3.1/go.mod h1:ap1AmDzcVOAz1YpeJ3TCzIgstoaWLA6jbbgxfB4w2iY=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
