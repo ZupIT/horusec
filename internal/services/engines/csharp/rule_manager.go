@@ -25,7 +25,11 @@ func NewRules() *engines.RuleManager {
 }
 
 func extensions() []string {
-	return []string{".cs", ".vb", ".cshtml", ".csproj", ".xml"}
+	// .config is where ASP.NET keeps the settings a good number of these rules
+	// are written against. HS-CSHARP-43 is named "Request Validation Disabled
+	// (Configuration File)", and others match <httpRuntime>, <sessionState> and
+	// <pages>, none of which appear anywhere but Web.config and App.config.
+	return []string{".cs", ".vb", ".cshtml", ".csproj", ".xml", ".config"}
 }
 
 // Rules return all rules registred to C# engine.
